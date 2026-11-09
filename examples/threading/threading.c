@@ -12,10 +12,9 @@
 
 void* threadfunc(void* thread_param)
 {
-    // Cast the parameter back to the struct type
     struct thread_data* thread_func_args = (struct thread_data *) thread_param;
 
-    // 1. Wait before obtaining the mutex (convert ms to microseconds)
+    // 1. Wait before obtaining the mutex
     usleep(thread_func_args->wait_to_obtain_ms * 1000);
 
     // 2. Obtain the mutex (lock)
@@ -27,9 +26,9 @@ void* threadfunc(void* thread_param)
     // 4. Release the mutex (unlock)
     pthread_mutex_unlock(thread_func_args->mutex);
 
-    // Return the pointer as suggested by the original stub.
-    // (Note: This might cause a small memory leak if the test doesn't free it, 
-    // but it strictly follows the provided template).
+    // 5. Marcar como exitoso
+    thread_func_args->thread_complete_success = true;
+
     return thread_param; 
 }
 
@@ -44,6 +43,7 @@ bool start_thread_obtaining_mutex(pthread_t *thread, pthread_mutex_t *mutex,int 
         ERROR_LOG("Failed to allocate memory for thread data");
         return false;
     }
+    data->thread_complete_success = false;
 
     // 2. Setup the struct with the provided arguments
     data->mutex = mutex;
