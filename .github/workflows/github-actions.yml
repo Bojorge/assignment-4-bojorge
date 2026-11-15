@@ -18,15 +18,17 @@ jobs:
             run: ./unit-test.sh
 
     full-test:
-        container: cuaesd/aesd-autotest:24-assignment4
-        runs-on: self-hosted
-        steps:
-          - uses: actions/checkout@v2
-          - name: Setup SSH key
-            uses: webfactory/ssh-agent@v0.9.1
-            with:
-              ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          - name: Checkout submodules
-            run: git submodule update --init --recursive
-          - name: Run full test
-            run: ./full-test.sh
+      container: cuaesd/aesd-autotest:24-assignment4
+      runs-on: self-hosted
+      steps:
+        - uses: actions/checkout@v2
+        - name: Install SSH client
+          run: apt-get update && apt-get install -y openssh-client
+        - name: Setup SSH key
+          uses: webfactory/ssh-agent@v0.9.1
+          with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        - name: Checkout submodules
+          run: git submodule update --init --recursive
+        - name: Run full test
+          run: ./full-test.sh
